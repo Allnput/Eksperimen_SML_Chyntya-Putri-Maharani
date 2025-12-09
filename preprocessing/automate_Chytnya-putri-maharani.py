@@ -8,13 +8,13 @@ def preprocess():
     print("=== Loading raw dataset ===")
     df = pd.read_csv("predictive_maintenance_raw.csv")
 
-    # Hapus kolom tidak dipakai
+    # Drop kolom yang tidak dipakai
     df = df.drop(columns=['UDI', 'Product ID'], errors='ignore')
 
-    # Handle missing values (hapus saja)
+    # Drop missing values
     df = df.dropna()
 
-    # Deteksi & clipping outlier
+    # Numeric columns sesuai dataset RAW
     numeric_cols = [
         'Air temperature [K]',
         'Process temperature [K]',
@@ -23,6 +23,7 @@ def preprocess():
         'Tool wear [min]'
     ]
 
+    # Handle outlier (IQR clipping)
     for col in numeric_cols:
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
@@ -30,20 +31,19 @@ def preprocess():
         lower = Q1 - 1.5 * IQR
         upper = Q3 + 1.5 * IQR
 
-        df[col] = np.where(df[col] > upper, upper, df[col])
-        df[col] = np.where(df[col] < lower, lower, df[col])
+        df[col] = np.clip(df[col], lower, upper)
 
-    # Normalisasi numeric
+    # Normalize numeric
     scaler = MinMaxScaler()
     df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
 
-    # Encoding kolom kategori
-    categorical_cols = df.select_dtypes(include=['object']).columns
+    # Encode categorical columns
+    categorical_cols = ['Type', 'Failure Type']
     for col in categorical_cols:
         df[col] = LabelEncoder().fit_transform(df[col])
 
-    # Split X–y
-    X = df.drop(columns=['Target', 'Failure Type'])
+    # Split X-y
+    X = df.drop(columns=['Target'])
     y = df['Target']
 
     X_train, X_test, y_train, y_test = train_test_split(
