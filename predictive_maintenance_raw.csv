@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿UDI,Product ID,Type,Air temperature [K],Process temperature [K],Rotational speed [rpm],Torque [Nm],Tool wear [min],Target,Failure Type
 1,M14860,M,298.1,308.6,1551,42.8,0,0,No Failure
 2,L47181,L,298.2,308.7,1408,46.3,3,0,No Failure
