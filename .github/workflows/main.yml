@@ -9,34 +9,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
-      # 3. Install dependencies (jika ada)
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install pandas numpy
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # 4. Jalankan script preprocessing
       - name: Run preprocessing script
-        run: |
-          python preprocessing/automate_Chyntya-putri-maharani.py
+        run: python preprocessing/automate_Chyntya-putri-maharani.py
 
-      # 5. Upload hasil preprocessing sebagai artifact
-      - name: Upload processed dataset
+      - name: Commit processed dataset
         run: |
-          git config --global user.email "chyntyamhrn@gmail.com"
-          git config --global user. name "Allnput"
+          git config user.email "chyntyamhrn@gmail.com"
+          git config user.name "Allnput"
           git add Predictive_Maintenance_Preproces.csv
-          git commit -m "Update Processed data"
-          
-          
+          git commit -m "Update Processed data" || echo "Nothing to commit"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
