@@ -6,7 +6,7 @@ import os
 
 def preprocess():
     print("=== Loading raw dataset ===")
-    df = pd.read_csv("data/predictive_maintenance_raw.csv")
+    df = pd.read_csv("predictive_maintenance_raw.csv")
 
     # Hapus kolom tidak dipakai
     df = df.drop(columns=['UDI', 'Product ID'], errors='ignore')
