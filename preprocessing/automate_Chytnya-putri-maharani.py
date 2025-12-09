@@ -8,13 +8,9 @@ def preprocess():
     print("=== Loading raw dataset ===")
     df = pd.read_csv("predictive_maintenance_raw.csv")
 
-    # Drop kolom yang tidak dipakai
     df = df.drop(columns=['UDI', 'Product ID'], errors='ignore')
-
-    # Drop missing values
     df = df.dropna()
 
-    # Numeric columns sesuai dataset RAW
     numeric_cols = [
         'Air temperature [K]',
         'Process temperature [K]',
@@ -23,7 +19,12 @@ def preprocess():
         'Tool wear [min]'
     ]
 
-    # Handle outlier (IQR clipping)
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    df = df.dropna(subset=numeric_cols)
+
+    # === Outlier Handling dengan IQR ===
     for col in numeric_cols:
         Q1 = df[col].quantile(0.25)
         Q3 = df[col].quantile(0.75)
@@ -33,16 +34,19 @@ def preprocess():
 
         df[col] = np.clip(df[col], lower, upper)
 
-    # Normalize numeric
+    # === Normalisasi ===
     scaler = MinMaxScaler()
     df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
 
-    # Encode categorical columns
+    # === Encoding kolom kategori ===
     categorical_cols = ['Type', 'Failure Type']
     for col in categorical_cols:
-        df[col] = LabelEncoder().fit_transform(df[col])
+        df[col] = LabelEncoder().fit_transform(df[col].astype(str))
 
-    # Split X-y
+    # === Split X dan y ===
+    if 'Target' not in df.columns:
+        raise ValueError("Kolom 'Target' tidak ditemukan dalam dataset!")
+
     X = df.drop(columns=['Target'])
     y = df['Target']
 
@@ -50,8 +54,10 @@ def preprocess():
         X, y, test_size=0.2, random_state=42
     )
 
+    # === Save output ===
     print("--- Saving output ---")
     os.makedirs("output", exist_ok=True)
+
     df.to_csv("output/processed_data.csv", index=False)
     X_train.to_csv("output/X_train.csv", index=False)
     X_test.to_csv("output/X_test.csv", index=False)
