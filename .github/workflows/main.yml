@@ -26,7 +26,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run preprocessing script
-        run: python preprocessing/automate_Chytya-putri-maharani.py
+        run: python preprocessing/automate_Chytnya-putri-maharani.py
 
       - name: Commit processed dataset
         run: |
