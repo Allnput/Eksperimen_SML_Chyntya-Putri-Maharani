@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.email "chyntyamhrn@gmail.com"
           git config user.name "Allnput"
-          git add output/processed_data.csv
+          git add preprocessing/Predictive_Maintenance_Preproces.csv
           git commit -m "Update Processed data" || echo "Nothing to commit"
           git push origin main
         env:
