@@ -58,7 +58,7 @@ def preprocess():
     print("--- Saving output ---")
     os.makedirs("output", exist_ok=True)
 
-    df.to_csv("output/processed_data.csv", index=False)
+    df.to_csv("preprocessing/Predictive_Maintenance_Preproces.csv", index=False)
     X_train.to_csv("output/X_train.csv", index=False)
     X_test.to_csv("output/X_test.csv", index=False)
     y_train.to_csv("output/y_train.csv", index=False)
